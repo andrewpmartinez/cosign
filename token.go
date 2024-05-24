@@ -183,8 +183,6 @@ func (s *StringToken) AddSigner(kid string, privateKey crypto.PrivateKey, signin
 		PreviousToken:    s,
 	}
 
-	jwt.SigningMethodRS256
-
 	return newToken, nil
 }
 
