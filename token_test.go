@@ -753,6 +753,60 @@ func TestStringToken_Kids(t *testing.T) {
 	})
 }
 
+func TestStringToken_Claims(t *testing.T) {
+	req := require.New(t)
+
+	signer1, err := newTestSigner()
+	req.NoError(err)
+	req.NotNil(signer1)
+
+	signer2, err := newTestSigner()
+	req.NoError(err)
+	req.NotNil(signer2)
+
+	signer3, err := newTestSigner()
+	req.NoError(err)
+	req.NotNil(signer3)
+
+	otherSigner, err := newTestSigner()
+	req.NoError(err)
+	req.NotNil(otherSigner)
+
+	t.Run("three signers added one after the other", func(t *testing.T) {
+		req := require.New(t)
+
+		claims := map[string]any{
+			"claim10": "val10",
+		}
+
+		headers := map[string]any{}
+
+		jwtStr1, err := signer1.SignToken(headers, claims)
+		req.NoError(err)
+		req.NotEmpty(jwtStr1)
+
+		token1, err := Parse(jwtStr1)
+		req.NoError(err)
+		req.NotNil(token1)
+
+		token2, err := token1.AddSigner(signer2.KeyId, signer2.PrivateKey, signer2.SigningMethod)
+		req.NoError(err)
+		req.NotNil(token2)
+
+		token3, err := token2.AddSigner(signer3.KeyId, signer3.PrivateKey, signer3.SigningMethod)
+		req.NoError(err)
+		req.NotNil(token3)
+
+		t.Run("all have the same claims", func(t *testing.T) {
+			req := require.New(t)
+
+			tokenClaims := token3.Claims()
+			req.Equal(tokenClaims, token2.Claims())
+			req.Equal(tokenClaims, token1.Claims())
+		})
+	})
+}
+
 type testSigner struct {
 	SigningMethod jwt.SigningMethod
 	PrivateKey    crypto.PrivateKey
