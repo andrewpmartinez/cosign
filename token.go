@@ -20,6 +20,7 @@ type Token interface {
 	Tokens() ([]string, []Token)
 	Token() string
 	AssemblePreviousToken() (Token, error)
+	Claims() []byte
 }
 
 type VerifyResult struct {
@@ -44,6 +45,10 @@ type StringToken struct {
 	TokenEncoded string
 
 	PreviousToken Token
+}
+
+func (s *StringToken) Claims() []byte {
+	return s.ClaimsBytes
 }
 
 func (s *StringToken) Token() string {
