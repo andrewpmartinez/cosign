@@ -47,13 +47,13 @@ When using `token.VerifyOne()` or `token.VerifyAll()` the referenced token and a
 For example, if an arbitrary token named `myToken` was signed three times, using `cosign.Parse(myToken)` will return a single `Token` instance that
 has references to two other token instances. 
 
-```
+```go
 topToken, _ := cosign.Parse(myToken)
 middleToken := topToken.Previous()
 bottomToken := middleToken.Previous()
 thisWillBeNil := bottomToken.Previous()
 ```
-If `middleToken.VerifyOne()` is run, it will verify against `middleToken` and `bottomToken`; as verification is down down through the token, not up.
+If `middleToken.VerifyOne()` is run, it will verify against `middleToken` and `bottomToken`; as verification is down through the token, not up.
 
 
 # Why?
